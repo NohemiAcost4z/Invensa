@@ -9,7 +9,7 @@ export default async function HomePage() {
     <GeneralLayout>
       <ul>
         {productos?.map(producto => (
-          <li>
+          <li key={producto.idProducto}>
             <span>{producto.nombreProducto}</span>
           </li>
         ))}
