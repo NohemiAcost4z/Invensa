@@ -1,12 +1,12 @@
 import React from 'react';
-import GeneralLayout from './layout';
+import { NavBarLayout } from './components/layouts/NavBarLayout';
 
 export default async function HomePage() {
   const respuesta = await fetch('http://localhost:3000/api/productos');
   const productos = await respuesta.json();
 
   return (
-    <GeneralLayout>
+    <NavBarLayout>
       <ul>
         {productos?.map(producto => (
           <li key={producto.idProducto}>
@@ -14,6 +14,6 @@ export default async function HomePage() {
           </li>
         ))}
       </ul>
-    </GeneralLayout>
+    </NavBarLayout>
   );
-}
+};
