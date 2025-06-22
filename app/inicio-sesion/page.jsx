@@ -1,5 +1,5 @@
 'use client';
-import { Button, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { NavBarLayout } from '../components/layouts/NavBarLayout';
 import { useEstadoApp } from '../context/EstadoAppContext';
 import { useState } from 'react';
@@ -29,25 +29,27 @@ export default function InicioSesionPage() {
     <NavBarLayout>
       <Typography variant="h2">Iniciar sesión</Typography>
       <Paper>
-        <TextField
-          title="Correo"
-          value={correo}
-          onChange={(event) => setCorreo(event.target.value)}
-        />
-        <TextField
-          title="Contraseña"
-          type="password"
-          value={contrasenia}
-          onChange={(event) => setContrasenia(event.target.value)}
-        />
-        <Button onClick={() => iniciarSesion({ correo, contrasenia })}>
-          Iniciar sesión
-        </Button>
-        {loginFailed && (
-          <Typography variant="caption" color="error">
-            No se pudo iniciar sesión, verifica tu correo y Contraseña
-          </Typography>
-        )}
+        <Box>
+          <TextField
+            label="Correo"
+            value={correo}
+            onChange={(event) => setCorreo(event.target.value)}
+          />
+          <TextField
+            label="Contraseña"
+            type="password"
+            value={contrasenia}
+            onChange={(event) => setContrasenia(event.target.value)}
+          />
+          <Button onClick={() => iniciarSesion({ correo, contrasenia })}>
+            Iniciar sesión
+          </Button>
+          {loginFailed && (
+            <Typography variant="caption" color="error">
+              No se pudo iniciar sesión, verifica tu correo y Contraseña
+            </Typography>
+          )}
+        </Box>
       </Paper>
     </NavBarLayout>
   );

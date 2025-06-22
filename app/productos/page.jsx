@@ -12,6 +12,14 @@ export default function ProductosPage() {
   const [modalAnnadirProductosAbierto, setModalAnnadirProductosAbierto] =
     useState(false);
 
+  const leerProductos = async () => {
+    const response = await fetch('http://localhost:3000/api/productos', {
+      method: 'GET',
+      credentials: 'include',
+    });
+    setProductos(await response.json());
+  };
+
   const crearProducto = async (productoAAnnadir) => {
     const formData = new FormData();
 
@@ -25,11 +33,6 @@ export default function ProductosPage() {
     });
     leerProductos();
     setModalAnnadirProductosAbierto(false);
-  };
-
-  const leerProductos = async () => {
-    const response = await fetch('http://localhost:3000/api/productos');
-    setProductos(await response.json());
   };
 
   useEffect(() => {
@@ -48,7 +51,11 @@ export default function ProductosPage() {
         </Button>
         <Grid container columns={3} spacing={4} direction="row">
           {productos.map((producto) => (
-            <CardProducto key={producto.idProducto} producto={producto} />
+            <CardProducto
+              key={producto.idProducto}
+              producto={producto}
+              onDelete={() => leerProductos()}
+            />
           ))}
         </Grid>
         <ModalAnnadirProductos

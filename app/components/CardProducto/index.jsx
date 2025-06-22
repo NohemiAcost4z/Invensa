@@ -11,7 +11,7 @@ import {
 import { Stock } from '../Stock';
 import styles from './CardProducto.module.scss';
 
-function CardProducto({ producto }) {
+function CardProducto({ producto, onDelete }) {
   const colombianPeso = new Intl.NumberFormat('es-ES', {
     style: 'currency',
     currency: 'COP',
@@ -22,7 +22,7 @@ function CardProducto({ producto }) {
       method: 'DELETE',
       body: JSON.stringify({ idProducto: idProductoAEliminar }),
     });
-    leerProductos();
+    onDelete();
   };
 
   return (

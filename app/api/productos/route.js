@@ -5,9 +5,25 @@ import path from 'path';
 import { rm } from 'fs';
 import { cookies } from 'next/headers';
 
+async function getUsuarioLogedo() {
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get('sesion')?.value;
+
+  const [resultadoUsuario] = await connection.execute(
+    'SELECT * FROM usuario WHERE Session_Token = ?',
+    [token]
+  );
+
+  return resultadoUsuario[0];
+}
+
 export async function GET() {
   try {
-    const [resultado] = await connection.execute('SELECT * FROM producto');
+    const usuario = await getUsuarioLogedo();
+    const [resultado] = await connection.execute(
+      'SELECT * FROM producto WHERE Id_Usuario = ?',
+      [usuario.Id_Usuario]
+    );
 
     const response = resultado.map((producto) => ({
       idProducto: producto.Id_Producto,
@@ -56,12 +72,8 @@ export async function POST(request) {
       ' ',
       '_'
     )}`;
-    const cookiesStore = cookies();
-    const token = cookiesStore.get('session')?.value;
-    const idUsuario = await connection(
-      'SELECT Id_Usuario FROM usuario WHERE Session_Token = ?',
-      [token]
-    );
+
+    const idUsuario = (await getUsuarioLogedo()).Id_Usuario;
 
     await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
 
@@ -96,15 +108,18 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
+    const idUsuario = (await getUsuarioLogedo()).Id_Usuario;
     const data = await request.json();
     const [imagenAEliminar] = await connection.execute(
-      `SELECT Path_Imagen from \`producto\` WHERE \`Id_Producto\` = "${data.idProducto}"`
+      'SELECT Path_Imagen from producto WHERE Id_Producto = ? AND  Id_Usuario = ?',
+      [data.idProducto, idUsuario]
     );
     await rm(
       path.join(process.cwd(), 'imagenes', imagenAEliminar[0].Path_Imagen)
     );
     await connection.execute(
-      `DELETE FROM \`producto\` WHERE \`Id_Producto\` = "${data.idProducto}"`
+      'DELETE FROM producto WHERE Id_Producto = ? AND Id_Usuario = ?',
+      [data.idProducto, idUsuario]
     );
     return new Response(null, { status: 204 });
   } catch (err) {
