@@ -1,0 +1,13 @@
+.toolbar {
+  justify-content: space-between;
+}
+
+.links {
+  display: flex;
+  gap: 1.5em;
+
+  .toolbarLinks {
+    color: #fff;
+    text-decoration: none;
+  }
+}

@@ -11,12 +11,14 @@
   "dependencies": {
     "@emotion/cache": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
     "@mui/material-nextjs": "^7.1.1",
     "mysql2": "^3.14.1",
     "next": "15.3.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -25,6 +27,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "sass": "^1.89.2",
     "typescript": "^5"
   }
 }
