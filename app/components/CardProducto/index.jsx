@@ -1,4 +1,4 @@
-import { Delete } from '@mui/icons-material';
+import { Delete, Edit } from '@mui/icons-material';
 import {
   Card,
   CardContent,
@@ -10,56 +10,83 @@ import {
 } from '@mui/material';
 import { Stock } from '../Stock';
 import styles from './CardProducto.module.scss';
+import { ModalEditarProducto } from '../ModalEditarProducto';
+import { useState } from 'react';
 
-function CardProducto({ producto, onDelete }) {
+function CardProducto({ producto, onEdit, onDelete }) {
+  const [modalEditarProductoAbierto, setModalEditarProductoAbierto] =
+    useState(false);
+
   const colombianPeso = new Intl.NumberFormat('es-ES', {
     style: 'currency',
     currency: 'COP',
   });
 
   const eliminarProducto = async (idProductoAEliminar) => {
-    await fetch('http://localhost:3000/api/productos', {
+    await fetch('http://localhost:3000/api/producto', {
       method: 'DELETE',
       body: JSON.stringify({ idProducto: idProductoAEliminar }),
     });
     onDelete();
   };
 
+  const handleModalClose = () => {
+    setModalEditarProductoAbierto(false);
+  };
+
   return (
-    <Card className={styles.cardContainer} key={producto.codigo}>
-      <CardContent className={styles.imageContainer}>
-        <IconButton
-          className={styles.deleteButtonContainer}
-          aria-label="borrar producto"
-          onClick={() => eliminarProducto(producto.idProducto)}
-        >
-          <Tooltip title="borrar producto" placement="top">
-            <Delete />
-          </Tooltip>
-        </IconButton>
-        <CardMedia
-          image={`/api/imagenes/${producto.pathImagen}`}
-          className={styles.imagenProducto}
-          title={producto.nombreProducto}
-        />
-      </CardContent>
-      <CardContent>
-        <Container className={styles.contentContainer}>
-          <Typography variant="h3" fontSize={34}>
-            {`${producto.nombreProducto[0].toUpperCase()}${producto.nombreProducto.slice(
-              1
-            )}`}
-          </Typography>
-          <Typography fontWeight="bold" alignSelf="flex-end">
-            {colombianPeso.format(producto.precio)}
-          </Typography>
-        </Container>
-        <Container>
-          <Typography fontSize={18}>Código: {producto.codigo}</Typography>
-          <Stock stock={producto.cantidad} idProducto={producto.idProducto} />
-        </Container>
-      </CardContent>
-    </Card>
+    <>
+      <Card className={styles.cardContainer} key={producto.codigo}>
+        <CardContent className={styles.imageContainer}>
+          <Container className={styles.topButtonsContainer}>
+            <IconButton
+              aria-label="Borrar producto"
+              onClick={() => eliminarProducto(producto.idProducto)}
+            >
+              <Tooltip title="Borrar producto" placement="top">
+                <Delete />
+              </Tooltip>
+            </IconButton>
+            <IconButton
+              aria-label="Editar producto"
+              onClick={() => setModalEditarProductoAbierto(true)}
+            >
+              <Tooltip title="Editar producto" placement="top">
+                <Edit />
+              </Tooltip>
+            </IconButton>
+          </Container>
+
+          <CardMedia
+            image={`/api/imagenes/${producto.pathImagen}`}
+            className={styles.imagenProducto}
+            title={producto.nombreProducto}
+          />
+        </CardContent>
+        <CardContent>
+          <Container className={styles.contentContainer}>
+            <Typography variant="h3" fontSize={34}>
+              {`${producto.nombreProducto[0].toUpperCase()}${producto.nombreProducto.slice(
+                1
+              )}`}
+            </Typography>
+            <Typography fontWeight="bold" alignSelf="flex-end">
+              {colombianPeso.format(producto.precio)}
+            </Typography>
+          </Container>
+          <Container>
+            <Typography fontSize={18}>Código: {producto.codigo}</Typography>
+            <Stock stock={producto.cantidad} idProducto={producto.idProducto} />
+          </Container>
+        </CardContent>
+      </Card>
+      <ModalEditarProducto
+        producto={producto}
+        open={modalEditarProductoAbierto}
+        onClose={handleModalClose}
+        onEdit={onEdit}
+      />
+    </>
   );
 }
 

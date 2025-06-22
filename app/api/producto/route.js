@@ -2,7 +2,7 @@ import { connection } from '../../../src/lib/db';
 import { writeFile } from 'fs/promises';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
-import { rm } from 'fs';
+import fs from 'fs/promises';
 import { getUsuarioLogedo } from '../helpers';
 
 export async function GET() {
@@ -102,12 +102,12 @@ export async function DELETE(request) {
       'SELECT Path_Imagen from producto WHERE Id_Producto = ? AND  Id_Usuario = ?',
       [data.idProducto, idUsuario]
     );
-    await rm(
-      path.join(process.cwd(), 'imagenes', imagenAEliminar[0].Path_Imagen)
-    );
     await connection.execute(
       'DELETE FROM producto WHERE Id_Producto = ? AND Id_Usuario = ?',
       [data.idProducto, idUsuario]
+    );
+    await fs.rm(
+      path.join(process.cwd(), 'imagenes', imagenAEliminar[0].Path_Imagen)
     );
     return new Response(null, { status: 204 });
   } catch (err) {
@@ -118,5 +118,68 @@ export async function DELETE(request) {
       },
       { status: 500 }
     );
+  }
+}
+
+export async function PATCH(request) {
+  try {
+    const data = await request.formData();
+    const imagenProducto = data.get('imagen');
+
+    if (!imagenProducto) {
+      return Response.json(
+        { error: 'No se subió una imagen' },
+        { status: 400 }
+      );
+    }
+
+    const idProducto = data.get('idProducto');
+    const nombreProducto = data.get('nombre');
+    const precioProducto = data.get('precio');
+    const codigoProducto = data.get('codigo');
+    const categoriaProducto = data.get('categoria');
+
+    const buffer = Buffer.from(await imagenProducto?.arrayBuffer());
+    const nombreImagen = `${idProducto}_${imagenProducto?.name?.replaceAll(
+      ' ',
+      '_'
+    )}`;
+
+    const idUsuario = (await getUsuarioLogedo()).Id_Usuario;
+
+    const [imageResults] = await connection.execute(
+      'SELECT Path_Imagen from producto WHERE Id_Usuario = ?',
+      [idUsuario]
+    );
+
+    const imageChanged = nombreImagen !== imageResults[0].Path_Imagen;
+
+    await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
+
+    await connection.execute(
+      'UPDATE producto SET Nombre_Producto = ?, Precio = ?, Codigo = ?, Categoria = ?, Path_Imagen = ? WHERE Id_Producto = ? AND Id_Usuario = ?',
+      [
+        nombreProducto,
+        precioProducto,
+        codigoProducto,
+        categoriaProducto,
+        nombreImagen,
+        idProducto,
+        idUsuario,
+      ],
+      nombreImagen
+    );
+
+    if (imageChanged) {
+      await fs.rm(
+        path.join(process.cwd(), 'imagenes', imageResults[0].Path_Imagen)
+      );
+    }
+    return Response.json({ message: 'producto actualizado' });
+  } catch (err) {
+    console.log(err);
+    return Response.json({
+      message: 'Hubo un error al tratar de actualizar el producto',
+    });
   }
 }

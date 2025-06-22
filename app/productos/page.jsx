@@ -13,7 +13,7 @@ export default function ProductosPage() {
     useState(false);
 
   const leerProductos = async () => {
-    const response = await fetch('http://localhost:3000/api/productos', {
+    const response = await fetch('http://localhost:3000/api/producto', {
       method: 'GET',
       credentials: 'include',
     });
@@ -27,7 +27,7 @@ export default function ProductosPage() {
       formData.append(key, productoAAnnadir[key])
     );
 
-    await fetch('http://localhost:3000/api/productos', {
+    await fetch('http://localhost:3000/api/producto', {
       method: 'POST',
       body: formData,
     });
@@ -55,6 +55,7 @@ export default function ProductosPage() {
               key={producto.idProducto}
               producto={producto}
               onDelete={() => leerProductos()}
+              onEdit={() => leerProductos()}
             />
           ))}
         </Grid>
