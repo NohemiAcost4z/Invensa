@@ -4,6 +4,7 @@ import { NavBarLayout } from '../components/layouts/NavBarLayout';
 import { ModalAnnadirProductos } from '../components/ModalAnnadirProductos';
 import { useEffect, useState } from 'react';
 import { CardProducto } from '../components/CardProducto';
+import { LoggedInLayout } from '../components/layouts/LoggedInLayout';
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState([]);
@@ -37,23 +38,25 @@ export default function ProductosPage() {
 
   return (
     <NavBarLayout>
-      <Typography variant="h2">Productos</Typography>
-      <Button
-        variant="contained"
-        onClick={() => setModalAnnadirProductosAbierto(true)}
-      >
-        Agregar Producto
-      </Button>
-      <Grid container columns={3} spacing={4} direction="row">
-        {productos.map((producto) => (
-          <CardProducto key={producto.idProducto} producto={producto} />
-        ))}
-      </Grid>
-      <ModalAnnadirProductos
-        open={modalAnnadirProductosAbierto}
-        onClose={() => setModalAnnadirProductosAbierto(false)}
-        onCrearProducto={crearProducto}
-      />
+      <LoggedInLayout>
+        <Typography variant="h2">Productos</Typography>
+        <Button
+          variant="contained"
+          onClick={() => setModalAnnadirProductosAbierto(true)}
+        >
+          Agregar Producto
+        </Button>
+        <Grid container columns={3} spacing={4} direction="row">
+          {productos.map((producto) => (
+            <CardProducto key={producto.idProducto} producto={producto} />
+          ))}
+        </Grid>
+        <ModalAnnadirProductos
+          open={modalAnnadirProductosAbierto}
+          onClose={() => setModalAnnadirProductosAbierto(false)}
+          onCrearProducto={crearProducto}
+        />
+      </LoggedInLayout>
     </NavBarLayout>
   );
 }

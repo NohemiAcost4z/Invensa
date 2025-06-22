@@ -3,41 +3,44 @@ interface Route {
   href: string;
 }
 
-const rutasNavegables: Route[]  = [
+const rutasNavegables = (logeado: boolean): Route[] => [
   {
     label: 'Menú',
     href: '/',
   },
-  {
-    label: 'Registrarse',
-    href: '/registrarse',
-  },
-  {
-    label: 'Iniciar sesión',
-    href: '/inicio-sesion',
-  },
-  {
-    label: 'Productos',
-    href: '/productos',
-  },
-  {
-    label: 'Compras',
-    href: '/compras',
-  },
-  {
-    label: 'Ventas',
-    href: '/ventas',
-  },
-  {
-    label: 'Movimientos',
-    href: '/movimientos',
-  },
-  {
-    label: 'Facturas',
-    href: '/facturas',
-  },
+  ...(logeado
+    ? [
+        {
+          label: 'Productos',
+          href: '/productos',
+        },
+        {
+          label: 'Compras',
+          href: '/compras',
+        },
+        {
+          label: 'Ventas',
+          href: '/ventas',
+        },
+        {
+          label: 'Movimientos',
+          href: '/movimientos',
+        },
+        {
+          label: 'Facturas',
+          href: '/facturas',
+        },
+      ]
+    : [
+        {
+          label: 'Registrarse',
+          href: '/registrarse',
+        },
+        {
+          label: 'Iniciar sesión',
+          href: '/inicio-sesion',
+        },
+      ]),
 ];
 
-export {
-  rutasNavegables,
-};
+export { rutasNavegables };

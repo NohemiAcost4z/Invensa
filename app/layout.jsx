@@ -2,7 +2,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { Roboto } from 'next/font/google';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../src/theme';
-import { EstadoNavBarProvider } from './context/EstadoContext';
+import { EstadoAppContextProvider } from './context/EstadoAppContext';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
-            <EstadoNavBarProvider>{children}</EstadoNavBarProvider>
+            <EstadoAppContextProvider>{children}</EstadoAppContextProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

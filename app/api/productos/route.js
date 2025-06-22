@@ -3,10 +3,11 @@ import { writeFile } from 'fs/promises';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
 import { rm } from 'fs';
+import { cookies } from 'next/headers';
 
 export async function GET() {
   try {
-    const [resultado] = await connection.execute('SELECT * FROM `producto`');
+    const [resultado] = await connection.execute('SELECT * FROM producto');
 
     const response = resultado.map((producto) => ({
       idProducto: producto.Id_Producto,
@@ -55,11 +56,27 @@ export async function POST(request) {
       ' ',
       '_'
     )}`;
+    const cookiesStore = cookies();
+    const token = cookiesStore.get('session')?.value;
+    const idUsuario = await connection(
+      'SELECT Id_Usuario FROM usuario WHERE Session_Token = ?',
+      [token]
+    );
 
     await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
 
     const [resultado] = await connection.execute(
-      `INSERT INTO \`producto\` VALUES ("${idProducto}", "${nombreProducto}", ${cantidadProducto}, ${precioProducto}, "${codigoProducto}", "${categoriaProducto}", "${nombreImagen}", "268f4166-9e48-4471-a853-b34d19dbc0a0")`
+      'INSERT INTO producto VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        idProducto,
+        nombreProducto,
+        cantidadProducto,
+        precioProducto,
+        codigoProducto,
+        categoriaProducto,
+        nombreImagen,
+        idUsuario,
+      ]
     );
 
     return Response.json({
