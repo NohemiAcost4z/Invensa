@@ -42,7 +42,7 @@ export default function RegistrarsePage() {
 
   const crearUsuario = async () => {
     try {
-      await fetch('api/registrarUsuario', {
+      await fetch('api/usuario/registrar', {
         method: 'POST',
         body: JSON.stringify({ ...nuevoUsuario }),
       });

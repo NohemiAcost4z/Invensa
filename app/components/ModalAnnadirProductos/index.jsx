@@ -2,14 +2,14 @@ import { useReducer, useState } from 'react';
 import {
   Button,
   Dialog,
+  DialogActions,
+  DialogContent,
   DialogTitle,
-  FormControl,
-  FormHelperText,
-  Input,
   Stack,
   TextField,
 } from '@mui/material';
 import styles from './ModalAnnadirProductos.module.scss';
+import { ButtonUploadImagen } from '../ButtonUploadImagen';
 
 const reducerProducto = (state, action) => {
   switch (action.type) {
@@ -48,83 +48,77 @@ const ModalAnnadirProductos = ({ open, onClose, onCrearProducto }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Añadir nuevo producto</DialogTitle>
-      <Stack spacing={2} className={styles.container}>
-        <TextField
-          label="Nombre"
-          value={productoAAnnadir.nombreProducto}
-          onChange={(event) =>
-            dispatch({
-              type: 'cambiar_nombre',
-              payload: event.target.value,
-            })
-          }
-        />
-        <TextField
-          label="Código"
-          value={productoAAnnadir.codigoProducto}
-          onChange={(event) =>
-            dispatch({
-              type: 'cambiar_codigo',
-              payload: event.target.value,
-            })
-          }
-        />
-        <TextField
-          value={productoAAnnadir.categoriaProducto}
-          label="Categoria"
-          onChange={(event) =>
-            dispatch({
-              type: 'cambiar_categoria',
-              payload: event.target.value,
-            })
-          }
-        />
-        <TextField
-          label="Precio"
-          type="number"
-          value={productoAAnnadir.precioProducto}
-          onChange={(event) =>
-            dispatch({
-              type: 'cambiar_precio',
-              payload: event.target.value,
-            })
-          }
-        />
-        <TextField
-          label="Cantidad"
-          type="number"
-          value={productoAAnnadir.cantidadProducto}
-          onChange={(event) =>
-            dispatch({
-              type: 'cambiar_cantidad',
-              payload: event.target.value,
-            })
-          }
-        />
-        <FormControl>
-          <Input
-            type="file"
-            accept="image/*"
-            aria-describedby="texto-seleccionador-imagen"
+      <DialogContent>
+        <Stack spacing={2} className={styles.container}>
+          <TextField
+            label="Nombre"
+            value={productoAAnnadir.nombreProducto}
             onChange={(event) =>
               dispatch({
-                type: 'annadir_imagen',
-                payload: event.target.files[0],
+                type: 'cambiar_nombre',
+                payload: event.target.value,
               })
             }
           />
-          <FormHelperText id="texto-seleccionador-imagen">
-            Selecciona la imagen de tu producto
-          </FormHelperText>
-        </FormControl>
-        <Button
-          variant="contained"
-          onClick={crearNuevoProducto}
-          loading={estaCreandoProducto}
-        >
+          <TextField
+            label="Código"
+            value={productoAAnnadir.codigoProducto}
+            onChange={(event) =>
+              dispatch({
+                type: 'cambiar_codigo',
+                payload: event.target.value,
+              })
+            }
+          />
+          <TextField
+            value={productoAAnnadir.categoriaProducto}
+            label="Categoria"
+            onChange={(event) =>
+              dispatch({
+                type: 'cambiar_categoria',
+                payload: event.target.value,
+              })
+            }
+          />
+          <TextField
+            label="Precio"
+            type="number"
+            value={productoAAnnadir.precioProducto}
+            onChange={(event) =>
+              dispatch({
+                type: 'cambiar_precio',
+                payload: event.target.value,
+              })
+            }
+          />
+          <TextField
+            label="Cantidad"
+            type="number"
+            value={productoAAnnadir.cantidadProducto}
+            onChange={(event) =>
+              dispatch({
+                type: 'cambiar_cantidad',
+                payload: event.target.value,
+              })
+            }
+          />
+          <ButtonUploadImagen
+            imagen={productoAAnnadir.imagenProducto}
+            setImagen={(imagen) =>
+              dispatch({
+                type: 'annadir_imagen',
+                payload: imagen,
+              })
+            }
+          />
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancelar</Button>
+        <Button onClick={crearNuevoProducto} loading={estaCreandoProducto}>
           Añadir producto
         </Button>
-      </Stack>
+      </DialogActions>
     </Dialog>
   );
 };

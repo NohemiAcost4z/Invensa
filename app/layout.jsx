@@ -3,6 +3,7 @@ import { Roboto } from 'next/font/google';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../src/theme';
 import { EstadoAppContextProvider } from './context/EstadoAppContext';
+import './global.scss';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],

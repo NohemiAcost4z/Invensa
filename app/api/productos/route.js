@@ -3,19 +3,7 @@ import { writeFile } from 'fs/promises';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
 import { rm } from 'fs';
-import { cookies } from 'next/headers';
-
-async function getUsuarioLogedo() {
-  const cookiesStore = await cookies();
-  const token = cookiesStore.get('sesion')?.value;
-
-  const [resultadoUsuario] = await connection.execute(
-    'SELECT * FROM usuario WHERE Session_Token = ?',
-    [token]
-  );
-
-  return resultadoUsuario[0];
-}
+import { getUsuarioLogedo } from '../helpers';
 
 export async function GET() {
   try {

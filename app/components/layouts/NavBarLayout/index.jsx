@@ -4,10 +4,16 @@ import {
   AppBar,
   Avatar,
   Box,
+  Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Menu,
   MenuItem,
+  Stack,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -20,10 +26,13 @@ import {
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
+import { ButtonUploadImagen } from '../../ButtonUploadImagen';
 
 function NavBarLayout({ children }) {
-  const { rutaActiva, usuario, setRutaActiva } = useEstadoApp();
+  const { rutaActiva, usuario, setRutaActiva, setUsuario } = useEstadoApp();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [cambiarPFPModalAbierto, setCambiarPFPModalAbierto] = useState(false);
+  const [fotoDePerfil, setFotoDePerfil] = useState();
 
   const rutas = rutasNavegables(!!usuario?.idUsuario);
 
@@ -39,6 +48,18 @@ function NavBarLayout({ children }) {
     setAnchorEl(null);
     await fetch('api/logout', { method: 'POST' });
     window.location.href = '/';
+  };
+
+  const cambiarFotoDePerfil = async () => {
+    const formData = new FormData();
+    formData.append('fotoPerfil', fotoDePerfil);
+    const response = await fetch('api/usuario/cambiarFotoDePerfil', {
+      method: 'PATCH',
+      body: formData,
+    });
+    const nombreFotoDePerfil = (await response.json()).fotoDePerfil;
+    setUsuario({ ...usuario, fotoPerfil: nombreFotoDePerfil });
+    setCambiarPFPModalAbierto(false);
   };
 
   return (
@@ -102,7 +123,7 @@ function NavBarLayout({ children }) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem>
+                <MenuItem onClick={() => setCambiarPFPModalAbierto(true)}>
                   <AddAPhotoIcon sx={{ marginRight: '0.4em' }} />
                   Cambiar foto de perfil
                 </MenuItem>
@@ -116,6 +137,28 @@ function NavBarLayout({ children }) {
         </Toolbar>
       </AppBar>
       <Box>{children}</Box>
+      <Dialog
+        open={cambiarPFPModalAbierto}
+        onClose={() => setCambiarPFPModalAbierto(false)}
+      >
+        <DialogTitle>Cambiar foto de perfil</DialogTitle>
+        <DialogContent>
+          <Stack spacing={1}>
+            <ButtonUploadImagen
+              imagen={fotoDePerfil}
+              setImagen={(imagen) => setFotoDePerfil(imagen)}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCambiarPFPModalAbierto(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={() => cambiarFotoDePerfil(fotoDePerfil)}>
+            Cambiar foto de perfil
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

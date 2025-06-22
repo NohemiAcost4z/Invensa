@@ -30,6 +30,8 @@ function Stock({ stock, idProducto }) {
         slotProps={{ htmlInput: { className: styles.stockInput } }}
         variant="standard"
         value={stockInterno}
+        inputMode="numeric"
+        type="number"
         onChange={(event) => setStockInterno(event.target.value)}
         onBlur={(event) => updateStock(event.target.value, idProducto)}
       />

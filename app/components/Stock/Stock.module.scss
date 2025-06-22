@@ -9,4 +9,7 @@
 
 .stockInput {
   text-align: center;
+  ::after {
+    display: none;
+  }
 }

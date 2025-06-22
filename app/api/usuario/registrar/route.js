@@ -1,6 +1,6 @@
-import { connection } from '../../../src/lib/db';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
+import { connection } from '../../../../src/lib/db';
 
 const SALT_STEPS = 10;
 
