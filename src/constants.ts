@@ -4,10 +4,6 @@ interface Route {
 }
 
 const rutasNavegables = (logeado: boolean): Route[] => [
-  {
-    label: 'Menú',
-    href: '/',
-  },
   ...(logeado
     ? [
         {
@@ -33,12 +29,12 @@ const rutasNavegables = (logeado: boolean): Route[] => [
       ]
     : [
         {
-          label: 'Registrarse',
-          href: '/registrarse',
+          label: 'Iniciar sesión',
+          href: '/',
         },
         {
-          label: 'Iniciar sesión',
-          href: '/inicio-sesion',
+          label: 'Registrarse',
+          href: '/registrarse',
         },
       ]),
 ];

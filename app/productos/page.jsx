@@ -1,10 +1,10 @@
 'use client';
-import { Button, Grid, Typography } from '@mui/material';
-import { NavBarLayout } from '../components/layouts/NavBarLayout';
+import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 import { ModalAnnadirProductos } from '../components/ModalAnnadirProductos';
 import { useEffect, useState } from 'react';
 import { CardProducto } from '../components/CardProducto';
 import { LoggedInLayout } from '../components/layouts/LoggedInLayout';
+import styles from './page.module.scss';
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState([]);
@@ -40,31 +40,35 @@ export default function ProductosPage() {
   }, []);
 
   return (
-    <NavBarLayout>
-      <LoggedInLayout>
-        <Typography variant="h2">Productos</Typography>
-        <Button
-          variant="contained"
-          onClick={() => setModalAnnadirProductosAbierto(true)}
-        >
-          Agregar Producto
-        </Button>
-        <Grid container columns={3} spacing={4} direction="row">
-          {productos.map((producto) => (
-            <CardProducto
-              key={producto.idProducto}
-              producto={producto}
-              onDelete={() => leerProductos()}
-              onEdit={() => leerProductos()}
-            />
-          ))}
-        </Grid>
-        <ModalAnnadirProductos
-          open={modalAnnadirProductosAbierto}
-          onClose={() => setModalAnnadirProductosAbierto(false)}
-          onCrearProducto={crearProducto}
-        />
-      </LoggedInLayout>
-    </NavBarLayout>
+    <LoggedInLayout>
+      <Container>
+        <Stack spacing={6}>
+          <Box className={styles.titleContainer}>
+            <Typography variant="h2">Productos</Typography>
+            <Button
+              variant="contained"
+              onClick={() => setModalAnnadirProductosAbierto(true)}
+            >
+              Agregar Producto
+            </Button>
+          </Box>
+          <Grid container columns={3} spacing={4} direction="row">
+            {productos.map((producto) => (
+              <CardProducto
+                key={producto.idProducto}
+                producto={producto}
+                onDelete={() => leerProductos()}
+                onEdit={() => leerProductos()}
+              />
+            ))}
+          </Grid>
+        </Stack>
+      </Container>
+      <ModalAnnadirProductos
+        open={modalAnnadirProductosAbierto}
+        onClose={() => setModalAnnadirProductosAbierto(false)}
+        onCrearProducto={crearProducto}
+      />
+    </LoggedInLayout>
   );
 }

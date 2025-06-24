@@ -5,13 +5,13 @@
 }
 
 .imagenProducto {
-  height: 18.75em;
-  width: 18.75em;
+  height: 20em;
+  width: 20em;
 }
 
 .cardContainer {
-  width: 25em;
-  padding-top: 1.5em;
+  width: 20em;
+  min-width: 20em;
 }
 
 .imageContainer {
@@ -19,6 +19,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
+  padding: 0;
 }
 
 .topButtonsContainer {

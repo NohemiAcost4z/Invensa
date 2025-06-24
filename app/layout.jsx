@@ -1,8 +1,9 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { Roboto } from 'next/font/google';
-import { ThemeProvider } from '@mui/material/styles';
 import theme from '../src/theme';
 import { EstadoAppContextProvider } from './context/EstadoAppContext';
+import { NavBarLayout } from './components/layouts/NavBarLayout';
+import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import './global.scss';
 
 const roboto = Roboto({
@@ -18,7 +19,12 @@ export default function RootLayout({ children }) {
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
-            <EstadoAppContextProvider>{children}</EstadoAppContextProvider>
+            <CssBaseline />
+            <EstadoAppContextProvider>
+              <Box>
+                <NavBarLayout>{children}</NavBarLayout>
+              </Box>
+            </EstadoAppContextProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

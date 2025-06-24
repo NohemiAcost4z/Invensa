@@ -1,29 +1,5 @@
-.contentContainer {
+.titleContainer {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5em;
-}
-
-.imagenProducto {
-  height: 18.75em;
-  width: 18.75em;
-}
-
-.cardContainer {
-  width: 25em;
-  padding-top: 1.5em;
-}
-
-.imageContainer {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  position: relative;
-}
-
-.deleteButtonContainer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin-right: 0.5em;
 }

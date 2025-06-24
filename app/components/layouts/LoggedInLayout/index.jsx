@@ -1,14 +1,20 @@
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEstadoApp } from '../../../context/EstadoAppContext';
+import { useEffect } from 'react';
 
 function LoggedInLayout({ children }) {
+  const router = useRouter();
   const { usuario } = useEstadoApp();
 
-  if (!usuario?.idUsuario) {
-    redirect('/');
-  }
+  useEffect(() => {
+    if (usuario === undefined) return;
 
-  return <>{children}</>;
+    if (!usuario?.idUsuario) {
+      router.push('/');
+    }
+  }, [router, usuario, usuario?.idUsuario]);
+
+  return usuario?.idUsuario ? <>{children}</> : null;
 }
 
 export { LoggedInLayout };

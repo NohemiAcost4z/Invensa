@@ -17,7 +17,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import styles from './NavBarLayout.module.scss';
 import { useEstadoApp } from '../../../context/EstadoAppContext';
 import {
@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { ButtonUploadImagen } from '../../ButtonUploadImagen';
+import { ElevationScroll } from '../../ElevationScroll';
 
 function NavBarLayout({ children }) {
   const { rutaActiva, usuario, setRutaActiva, setUsuario } = useEstadoApp();
@@ -64,79 +65,84 @@ function NavBarLayout({ children }) {
 
   return (
     <>
-      <AppBar position="sticky">
-        <Toolbar className={styles.toolbar}>
-          <Avatar
-            src={
-              usuario?.idUsuario
-                ? `/api/imagenes/${usuario.fotoPerfil}`
-                : '/imagenes/logo-invensa.png'
-            }
-          />
-          <Box display="flex">
-            <Container className={styles.links}>
-              {rutas.map((ruta) => (
-                <NextLink
-                  key={ruta.href}
-                  href={ruta.href}
-                  style={{ textDecoration: 'none' }}
-                  onClick={() => setRutaActiva(ruta.href)}
-                >
-                  <Typography
-                    className={styles.toolbarLinks}
-                    variant="h6"
-                    fontWeight={rutaActiva === ruta.href ? 'bolder' : 'normal'}
+      <ElevationScroll elevationColor="#26041d">
+        <AppBar position="sticky">
+          <Toolbar className={styles.toolbar}>
+            <Avatar
+              src={
+                usuario?.idUsuario
+                  ? `/api/imagenes/${usuario.fotoPerfil}`
+                  : '/imagenes/logo-invensa.png'
+              }
+            />
+            <Box display="flex">
+              <Container className={styles.links}>
+                {rutas.map((ruta) => (
+                  <Link
+                    key={ruta.href + ruta.label}
+                    href={ruta.href}
+                    style={{ textDecoration: 'none' }}
+                    onClick={() => setRutaActiva(ruta.href)}
                   >
-                    {ruta.label}
-                  </Typography>
-                </NextLink>
-              ))}
-            </Container>
-            <div>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon
+                    <Typography
+                      className={styles.toolbarLinks}
+                      variant="h6"
+                      fontWeight={
+                        rutaActiva === ruta.href ? 'bolder' : 'normal'
+                      }
+                    >
+                      {ruta.label}
+                    </Typography>
+                  </Link>
+                ))}
+              </Container>
+              <div>
+                <IconButton
                   size="large"
-                  aria-label="menu de gestión de la cuenta"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => setCambiarPFPModalAbierto(true)}>
-                  <AddAPhotoIcon sx={{ marginRight: '0.4em' }} />
-                  Cambiar foto de perfil
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <LogoutIcon sx={{ marginRight: '0.4em' }} />
-                  Logout
-                </MenuItem>
-              </Menu>
-            </div>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Box>{children}</Box>
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                >
+                  <MenuIcon
+                    size="large"
+                    aria-label="menu de gestión de la cuenta"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleMenu}
+                  />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={() => setCambiarPFPModalAbierto(true)}>
+                    <AddAPhotoIcon sx={{ marginRight: '0.4em' }} />
+                    Cambiar foto de perfil
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <LogoutIcon sx={{ marginRight: '0.4em' }} />
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </div>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      </ElevationScroll>
+      <Toolbar />
+      {children}
       <Dialog
         open={cambiarPFPModalAbierto}
         onClose={() => setCambiarPFPModalAbierto(false)}

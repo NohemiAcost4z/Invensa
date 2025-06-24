@@ -7,7 +7,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { NavBarLayout } from '../components/layouts/NavBarLayout';
 import { useReducer, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -53,7 +52,7 @@ export default function RegistrarsePage() {
   };
 
   return (
-    <NavBarLayout>
+    <>
       <Typography variant="h2">Crear Nuevo Usuario</Typography>
       <Paper sx={{ padding: '1em 1.5em' }}>
         <Container>
@@ -104,6 +103,6 @@ export default function RegistrarsePage() {
           </Button>
         </Container>
       </Paper>
-    </NavBarLayout>
+    </>
   );
 }

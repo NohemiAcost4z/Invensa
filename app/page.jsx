@@ -1,10 +1,16 @@
-import { NavBarLayout } from './components/layouts/NavBarLayout';
-import { Typography } from '@mui/material';
+'use client';
 
-export default async function HomePage() {
-  return (
-    <NavBarLayout>
-      <Typography variant="h1">Invensa gestión</Typography>
-    </NavBarLayout>
-  );
+import { useRouter } from 'next/navigation';
+import { HomePageComponent } from './components/HomePage';
+import { useEstadoApp } from './context/EstadoAppContext';
+
+export default function HomePage() {
+  const { usuario } = useEstadoApp();
+  const router = useRouter();
+
+  if (usuario && usuario.idUsuario) {
+    return router.push('/productos');
+  }
+
+  return <HomePageComponent />;
 }
