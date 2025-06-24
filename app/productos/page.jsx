@@ -132,7 +132,6 @@ export default function ProductosPage() {
                           />
                         }
                         label={categoria}
-                        disableRipple
                         sx={{
                           pointerEvents: 'none',
                           '&:hover': {

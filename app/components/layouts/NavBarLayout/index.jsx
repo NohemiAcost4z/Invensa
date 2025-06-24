@@ -98,7 +98,9 @@ function NavBarLayout({ children }) {
                       color={
                         trigger
                           ? theme.palette.text.secondary
-                          : theme.palette.text.primary
+                          : !!usuario?.idUsuario
+                          ? theme.palette.text.primary
+                          : 'white'
                       }
                       variant="h6"
                       fontWeight={
@@ -114,11 +116,6 @@ function NavBarLayout({ children }) {
                 <IconButton
                   size="large"
                   edge="start"
-                  color={
-                    trigger
-                      ? theme.palette.text.secondary
-                      : theme.palette.text.primary
-                  }
                   aria-label="menu"
                   sx={{ mr: 2 }}
                 >
@@ -128,6 +125,13 @@ function NavBarLayout({ children }) {
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
                     onClick={handleMenu}
+                    sx={{
+                      color: trigger
+                        ? theme.palette.text.secondary
+                        : !!usuario?.idUsuario
+                        ? theme.palette.text.primary
+                        : 'white',
+                    }}
                   />
                 </IconButton>
                 <Menu

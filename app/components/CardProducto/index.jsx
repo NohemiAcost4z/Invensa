@@ -45,7 +45,7 @@ function CardProducto({ producto, onEdit, onDelete }) {
               onClick={() => eliminarProducto(producto.idProducto)}
             >
               <Tooltip title="Borrar producto" placement="top">
-                <Delete />
+                <Delete sx={{ color: 'grey' }} />
               </Tooltip>
             </IconButton>
             <IconButton
@@ -53,7 +53,7 @@ function CardProducto({ producto, onEdit, onDelete }) {
               onClick={() => setModalEditarProductoAbierto(true)}
             >
               <Tooltip title="Editar producto" placement="top">
-                <Edit />
+                <Edit sx={{ color: 'grey' }} />
               </Tooltip>
             </IconButton>
           </Box>
