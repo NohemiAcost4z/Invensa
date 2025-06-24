@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './HomePage.module.scss';
 import { useEstadoApp } from '../../context/EstadoAppContext';
@@ -29,13 +29,14 @@ export function HomePageComponent() {
       method: 'POST',
       body: JSON.stringify(datosDeInicio),
     });
+
     const usuario = await response.json().catch(() => setLoginFailed(true));
     if (!!usuario?.usuario?.idUsuario) {
       setUsuario(usuario?.usuario);
-      redirect('/productos');
     } else {
       setLoginFailed(true);
     }
+    router.push('/productos');
   };
 
   useEffect(() => {

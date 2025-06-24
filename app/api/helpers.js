@@ -7,7 +7,7 @@ async function getUsuarioLogedo() {
 
   const [resultadoUsuario] = await connection.execute(
     'SELECT * FROM usuario WHERE Session_Token = ?',
-    [token]
+    [token ?? null]
   );
 
   return resultadoUsuario[0];

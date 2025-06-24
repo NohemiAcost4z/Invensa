@@ -16,6 +16,8 @@ import {
   Stack,
   Toolbar,
   Typography,
+  useScrollTrigger,
+  useTheme,
 } from '@mui/material';
 import Link from 'next/link';
 import styles from './NavBarLayout.module.scss';
@@ -31,6 +33,13 @@ import { ElevationScroll } from '../../ElevationScroll';
 
 function NavBarLayout({ children }) {
   const { rutaActiva, usuario, setRutaActiva, setUsuario } = useEstadoApp();
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+    target: typeof window !== 'undefined' ? window : undefined,
+  });
+  const theme = useTheme();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [cambiarPFPModalAbierto, setCambiarPFPModalAbierto] = useState(false);
   const [fotoDePerfil, setFotoDePerfil] = useState();
@@ -65,7 +74,7 @@ function NavBarLayout({ children }) {
 
   return (
     <>
-      <ElevationScroll elevationColor="#26041d">
+      <ElevationScroll elevationColor="#26041d" trigger={trigger}>
         <AppBar position="sticky">
           <Toolbar className={styles.toolbar}>
             <Avatar
@@ -86,6 +95,11 @@ function NavBarLayout({ children }) {
                   >
                     <Typography
                       className={styles.toolbarLinks}
+                      color={
+                        trigger
+                          ? theme.palette.text.secondary
+                          : theme.palette.text.primary
+                      }
                       variant="h6"
                       fontWeight={
                         rutaActiva === ruta.href ? 'bolder' : 'normal'
@@ -100,7 +114,11 @@ function NavBarLayout({ children }) {
                 <IconButton
                   size="large"
                   edge="start"
-                  color="inherit"
+                  color={
+                    trigger
+                      ? theme.palette.text.secondary
+                      : theme.palette.text.primary
+                  }
                   aria-label="menu"
                   sx={{ mr: 2 }}
                 >

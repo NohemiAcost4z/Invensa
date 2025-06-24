@@ -5,13 +5,13 @@
 }
 
 .imagenProducto {
-  height: 20em;
-  width: 20em;
+  height: 21em;
+  width: 100%;
 }
 
 .cardContainer {
-  width: 20em;
-  min-width: 20em;
+  width: 21em;
+  min-width: 21em;
 }
 
 .imageContainer {
@@ -27,4 +27,7 @@
   top: 0;
   right: 0;
   margin-right: 0.5em;
+  margin-top: 0.5em;
+  justify-self: end;
+  text-align: right;
 }

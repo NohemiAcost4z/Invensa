@@ -10,7 +10,7 @@ export async function GET() {
     const usuario = await getUsuarioLogedo();
     const [resultado] = await connection.execute(
       'SELECT * FROM producto WHERE Id_Usuario = ?',
-      [usuario.Id_Usuario]
+      [usuario?.Id_Usuario ?? null]
     );
 
     const response = resultado.map((producto) => ({
@@ -28,7 +28,7 @@ export async function GET() {
     console.log(err);
     return Response.json(
       {
-        Message: 'No se pudo crear el producto',
+        Message: 'No se obtener el usuario',
       },
       { status: 500 }
     );

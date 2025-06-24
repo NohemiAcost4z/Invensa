@@ -1,5 +1,6 @@
 import { Delete, Edit } from '@mui/icons-material';
 import {
+  Box,
   Card,
   CardContent,
   CardMedia,
@@ -38,7 +39,7 @@ function CardProducto({ producto, onEdit, onDelete }) {
     <>
       <Card className={styles.cardContainer} key={producto.codigo}>
         <CardContent className={styles.imageContainer}>
-          <Container className={styles.topButtonsContainer}>
+          <Box className={styles.topButtonsContainer}>
             <IconButton
               aria-label="Borrar producto"
               onClick={() => eliminarProducto(producto.idProducto)}
@@ -55,8 +56,7 @@ function CardProducto({ producto, onEdit, onDelete }) {
                 <Edit />
               </Tooltip>
             </IconButton>
-          </Container>
-
+          </Box>
           <CardMedia
             image={`/api/imagenes/${producto.pathImagen}`}
             className={styles.imagenProducto}
@@ -76,6 +76,12 @@ function CardProducto({ producto, onEdit, onDelete }) {
           </Container>
           <Container>
             <Typography fontSize={18}>Código: {producto.codigo}</Typography>
+            <Typography fontSize={18}>
+              Categoria:{' '}
+              {`${producto.categoria[0].toUpperCase()}${producto.categoria.slice(
+                1
+              )}`}
+            </Typography>
             <Stock stock={producto.cantidad} idProducto={producto.idProducto} />
           </Container>
         </CardContent>
