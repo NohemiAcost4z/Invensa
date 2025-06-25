@@ -10,6 +10,13 @@ import {
 export async function POST(req) {
   try {
     const usuario = await getUsuarioLogedo();
+
+    if (!usuario)
+      return Response.json(
+        { message: 'No tienes acceso a este recurso' },
+        { status: 403 }
+      );
+
     const body = await req.json();
     const idNuevaVenta = uuid();
     let clienteVenta = undefined;

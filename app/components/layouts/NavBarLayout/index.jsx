@@ -56,7 +56,7 @@ function NavBarLayout({ children }) {
 
   const handleLogout = async () => {
     setAnchorEl(null);
-    await fetch('api/logout', { method: 'POST' });
+    await fetch('api/logout', { method: 'POST', credentials: 'include' });
     window.location.href = '/';
   };
 
@@ -66,6 +66,7 @@ function NavBarLayout({ children }) {
     const response = await fetch('api/usuario/cambiarFotoDePerfil', {
       method: 'PATCH',
       body: formData,
+      credentials: 'include',
     });
     const nombreFotoDePerfil = (await response.json()).fotoDePerfil;
     setUsuario({ ...usuario, fotoPerfil: nombreFotoDePerfil });

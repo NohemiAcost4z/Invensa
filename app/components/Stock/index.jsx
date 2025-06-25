@@ -11,6 +11,7 @@ function Stock({ stock, idProducto }) {
     const response = await fetch('api/producto/actualizarStock', {
       method: 'PATCH',
       body: JSON.stringify({ stock: +stock, idProducto }),
+      credentials: 'include',
     });
     const newStock = (await response.json()) ?? stock;
     setStockInterno(newStock.stock);

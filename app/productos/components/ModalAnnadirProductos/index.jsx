@@ -82,8 +82,10 @@ const ModalAnnadirProductos = ({ open, onClose, onCrearProducto }) => {
           />
           <TextField
             label="Precio"
+            inputMode="numeric"
             type="number"
             value={productoAAnnadir.precioProducto}
+            slotProps={{ htmlInput: { className: styles.stockInput } }}
             onChange={(event) =>
               dispatch({
                 type: 'cambiar_precio',
@@ -93,8 +95,10 @@ const ModalAnnadirProductos = ({ open, onClose, onCrearProducto }) => {
           />
           <TextField
             label="Cantidad"
+            inputMode="numeric"
             type="number"
             value={productoAAnnadir.cantidadProducto}
+            slotProps={{ htmlInput: { className: styles.stockInput } }}
             onChange={(event) =>
               dispatch({
                 type: 'cambiar_cantidad',

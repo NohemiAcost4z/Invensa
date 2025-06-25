@@ -1,18 +1,18 @@
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  Input,
-  InputLabel,
-  MenuItem,
-  Select,
+  Snackbar,
   Stack,
   TextField,
 } from '@mui/material';
-import { useEffect, useReducer, useState } from 'react';
+import { useReducer, useState } from 'react';
+import { SelectProducto } from '../../../components/SelectProducto';
+import { DateSelector } from '../../../components/DateSelector';
+import styles from './ModalAnnadirVenta.module.scss';
 
 const ventaAAnnadirReducer = (state, action) => {
   switch (action.type) {
@@ -41,6 +41,8 @@ const ventaAAnnadirReducer = (state, action) => {
 };
 
 function ModalAnnadirVenta({ open, onClose, onCrear }) {
+  const [error, setError] = useState('');
+  const [notificando, setNotificando] = useState('');
   const [ventaAAnnadir, dispatch] = useReducer(ventaAAnnadirReducer, {
     cliente: {
       nombreCliente: '',
@@ -52,35 +54,30 @@ function ModalAnnadirVenta({ open, onClose, onCrear }) {
     fechaVenta: '',
   });
   const [estaCreandoVenta, setEstaCreandoVenta] = useState(false);
-  const [productos, setProductos] = useState([]);
 
-  const obtenerProductos = async () => {
-    const response = await fetch('/api/producto', {
-      method: 'GET',
-      credentials: 'include',
-    });
-    setProductos(await response.json());
-  };
-
-  const crearNuevaVenta = async () => {
+  const crearNuevaVenta = async (ventaAAnnadir) => {
     setEstaCreandoVenta(true);
-    await fetch('api/venta', {
+    await fetch('api/ventas', {
       method: 'POST',
       body: JSON.stringify({ ...ventaAAnnadir }),
+      credentials: 'include',
     });
+    if (!response.ok) {
+      setEstaCreandoAlerta(false);
+      const error = await response.json();
+      setNotificando(true);
+      setError(error.message);
+      return;
+    }
     onCrear();
     setEstaCreandoVenta(false);
   };
-
-  useEffect(() => {
-    obtenerProductos();
-  }, []);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle>Añadir venta</DialogTitle>
       <DialogContent>
-        <Stack spacing={2}>
+        <Stack spacing={2} paddingTop={1}>
           <TextField
             label="Cliente"
             value={ventaAAnnadir.nombreCliente}
@@ -105,31 +102,21 @@ function ModalAnnadirVenta({ open, onClose, onCrear }) {
               })
             }
           />
-          <FormControl fullWidth>
-            <InputLabel id="seleccionar-producto-label">Producto</InputLabel>
-            <Select
-              id="seleccionar-producto"
-              labelId="seleccionar-producto-label"
-              label="Producto"
-              value={ventaAAnnadir.idProducto}
-              onChange={(event) => {
-                dispatch({
-                  type: 'cambiar_producto',
-                  payload: event.target.value,
-                });
-              }}
-            >
-              {productos.map((producto) => (
-                <MenuItem key={producto.idProducto} value={producto.idProducto}>
-                  {producto.nombreProducto}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
+          <SelectProducto
+            value={ventaAAnnadir.idProducto}
+            onChange={(event) => {
+              dispatch({
+                type: 'cambiar_producto',
+                payload: event.target.value,
+              });
+            }}
+          />
           <TextField
             label="Cantidad"
+            inputMode="numeric"
+            type="number"
             value={ventaAAnnadir.cantidad}
+            slotProps={{ htmlInput: { className: styles.stockInput } }}
             onChange={(event) =>
               dispatch({
                 type: 'cambiar_cantidad',
@@ -138,37 +125,43 @@ function ModalAnnadirVenta({ open, onClose, onCrear }) {
             }
           ></TextField>
         </Stack>
-        <FormControl sx={{ marginTop: 4 }} fullWidth>
-          <InputLabel id="seleccionar-fecha-label" shrink>
-            Fecha de venta
-          </InputLabel>
-          <Input
-            id="seleccionar-fecha"
-            aria-labelledby="seleccionar-fecha-label"
-            label="fecha"
-            type="date"
-            value={ventaAAnnadir.fechaVenta}
-            onChange={(event) =>
-              dispatch({
-                type: 'cambiar_fecha',
-                payload: event.target.value,
-              })
-            }
-          />
-        </FormControl>
+        <DateSelector
+          marginTop={4}
+          value={ventaAAnnadir.fechaVenta}
+          onChange={(event) =>
+            dispatch({
+              type: 'cambiar_fecha',
+              payload: event.target.value,
+            })
+          }
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} variant="outlined">
           Cancelar
         </Button>
         <Button
-          onClick={crearNuevaVenta}
+          onClick={() => crearNuevaVenta(ventaAAnnadir)}
           loading={estaCreandoVenta}
           variant="contained"
         >
           Añadir producto
         </Button>
       </DialogActions>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={notificando}
+        autoHideDuration={5000}
+        onClose={() => setNotificando(false)}
+      >
+        <Alert
+          onClose={() => setNotificando(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }

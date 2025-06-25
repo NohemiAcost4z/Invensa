@@ -11,20 +11,16 @@ const rutasNavegables = (logeado: boolean): Route[] => [
           href: '/productos',
         },
         {
-          label: 'Compras',
-          href: '/compras',
-        },
-        {
           label: 'Ventas',
           href: '/ventas',
         },
         {
-          label: 'Movimientos',
-          href: '/movimientos',
+          label: 'Alertas',
+          href: '/alertas-de-stock',
         },
         {
-          label: 'Facturas',
-          href: '/facturas',
+          label: 'Movimientos',
+          href: '/movimientos',
         },
       ]
     : [

@@ -36,7 +36,9 @@ export default function VentasPage() {
   });
 
   const cargarVentas = async () => {
-    const response = await fetch('/api/venta/obtenerVentas');
+    const response = await fetch('/api/ventas/obtenerVentas', {
+      credentials: 'include',
+    });
     const data = await response.json();
     setVentas(data);
   };

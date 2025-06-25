@@ -5,7 +5,9 @@ export async function GET() {
   try {
     const usuario = await getUsuarioLogedo();
 
-    if (!usuario) return Response.json([], { status: 403 });
+    if (!usuario) {
+      return Response.json([], { status: 403 });
+    }
 
     const [resultadoVenta] = await connection.execute(
       'SELECT * FROM venta WHERE Id_Usuario = ?',

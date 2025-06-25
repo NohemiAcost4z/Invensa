@@ -1,15 +1,17 @@
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Snackbar,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
 import { ButtonUploadImagen } from '../ButtonUploadImagen';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 const editarProductoReducer = (state, action) => {
   switch (action.type) {
@@ -42,6 +44,8 @@ const editarProductoReducer = (state, action) => {
 };
 
 function ModalEditarProducto({ open, producto, onEdit, onClose }) {
+  const [error, setError] = useState('');
+  const [notificando, setNotificando] = useState('');
   const [productoEditando, dispatch] = useReducer(editarProductoReducer, {
     nombre: '',
     precio: '',
@@ -56,10 +60,18 @@ function ModalEditarProducto({ open, producto, onEdit, onClose }) {
     Object.keys(productoEditando).map((key) =>
       formData.append(key, productoEditando[key])
     );
-    await fetch('http://localhost:3000/api/producto', {
+    const response = await fetch('http://localhost:3000/api/productos', {
       method: 'PATCH',
       body: formData,
+      credentials: 'include',
     });
+    if (!response.ok) {
+      setEstaCreandoAlerta(false);
+      const error = await response.json();
+      setNotificando(true);
+      setError(error.message);
+      return;
+    }
     onEdit();
     onClose();
   };
@@ -133,6 +145,20 @@ function ModalEditarProducto({ open, producto, onEdit, onClose }) {
           Completar
         </Button>
       </DialogActions>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={notificando}
+        autoHideDuration={5000}
+        onClose={() => setNotificando(false)}
+      >
+        <Alert
+          onClose={() => setNotificando(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }

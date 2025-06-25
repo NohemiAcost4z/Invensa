@@ -31,7 +31,7 @@ export default function ProductosPage() {
     useState(false);
 
   const leerProductos = async () => {
-    const response = await fetch('api/producto', {
+    const response = await fetch('api/productos', {
       method: 'GET',
       credentials: 'include',
     });
@@ -45,9 +45,10 @@ export default function ProductosPage() {
       formData.append(key, productoAAnnadir[key])
     );
 
-    await fetch('api/producto', {
+    await fetch('api/productos', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
     });
     leerProductos();
     setModalAnnadirProductosAbierto(false);

@@ -17,6 +17,13 @@ export async function PATCH(req) {
 
     const usuario = await getUsuarioLogedo();
 
+    if (!usuario) {
+      return Response.json(
+        { message: 'no puedes modificar este recurso' },
+        { status: 403 }
+      );
+    }
+
     const buffer = Buffer.from(await fotoPerfil?.arrayBuffer());
     const nombreImagen = `${usuario.idUsuario}_${fotoPerfil?.name?.replaceAll(
       ' ',

@@ -25,9 +25,10 @@ function CardProducto({ producto, onEdit, onDelete }) {
   });
 
   const eliminarProducto = async (idProductoAEliminar) => {
-    await fetch('api/producto', {
+    await fetch('api/productos', {
       method: 'DELETE',
       body: JSON.stringify({ idProducto: idProductoAEliminar }),
+      credentials: 'include',
     });
     onDelete();
   };

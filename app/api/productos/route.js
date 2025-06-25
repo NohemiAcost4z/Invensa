@@ -8,6 +8,9 @@ import { getUsuarioLogedo } from '../helpers';
 export async function GET() {
   try {
     const usuario = await getUsuarioLogedo();
+
+    if (!usuario) return Response.json([], { status: 403 });
+
     const [resultado] = await connection.execute(
       'SELECT * FROM producto WHERE Id_Usuario = ?',
       [usuario?.idUsuario ?? null]
