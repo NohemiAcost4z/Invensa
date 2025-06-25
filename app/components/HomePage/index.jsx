@@ -22,6 +22,7 @@ export function HomePageComponent() {
   const [loginFailed, setLoginFailed] = useState(false);
   const [correo, setCorreo] = useState('');
   const [contrasenia, setContrasenia] = useState('');
+  const [redirect, setRedirect] = useState(false);
   const { setUsuario } = useEstadoApp();
 
   const iniciarSesion = async (datosDeInicio) => {
@@ -33,11 +34,17 @@ export function HomePageComponent() {
     const usuario = await response.json().catch(() => setLoginFailed(true));
     if (!!usuario?.usuario?.idUsuario) {
       setUsuario(usuario?.usuario);
+      setRedirect(true);
     } else {
       setLoginFailed(true);
     }
-    router.push('/productos');
   };
+
+  useEffect(() => {
+    if (redirect) {
+      router.push('/productos');
+    }
+  }, [redirect, router]);
 
   useEffect(() => {
     const originalBg = document.body.style.backgroundColor;

@@ -18,13 +18,14 @@ function CardProducto({ producto, onEdit, onDelete }) {
   const [modalEditarProductoAbierto, setModalEditarProductoAbierto] =
     useState(false);
 
-  const colombianPeso = new Intl.NumberFormat('es-ES', {
+  const colombianPeso = new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
+    maximumFractionDigits: 0,
   });
 
   const eliminarProducto = async (idProductoAEliminar) => {
-    await fetch('http://localhost:3000/api/producto', {
+    await fetch('api/producto', {
       method: 'DELETE',
       body: JSON.stringify({ idProducto: idProductoAEliminar }),
     });
@@ -41,19 +42,19 @@ function CardProducto({ producto, onEdit, onDelete }) {
         <CardContent className={styles.imageContainer}>
           <Box className={styles.topButtonsContainer}>
             <IconButton
-              aria-label="Borrar producto"
-              onClick={() => eliminarProducto(producto.idProducto)}
-            >
-              <Tooltip title="Borrar producto" placement="top">
-                <Delete sx={{ color: 'grey' }} />
-              </Tooltip>
-            </IconButton>
-            <IconButton
               aria-label="Editar producto"
               onClick={() => setModalEditarProductoAbierto(true)}
             >
               <Tooltip title="Editar producto" placement="top">
-                <Edit sx={{ color: 'grey' }} />
+                <Edit sx={{ color: 'lightgrey' }} />
+              </Tooltip>
+            </IconButton>
+            <IconButton
+              aria-label="Borrar producto"
+              onClick={() => eliminarProducto(producto.idProducto)}
+            >
+              <Tooltip title="Borrar producto" placement="top">
+                <Delete sx={{ color: 'lightgrey' }} />
               </Tooltip>
             </IconButton>
           </Box>

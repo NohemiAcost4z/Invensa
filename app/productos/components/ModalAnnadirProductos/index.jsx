@@ -9,7 +9,7 @@ import {
   TextField,
 } from '@mui/material';
 import styles from './ModalAnnadirProductos.module.scss';
-import { ButtonUploadImagen } from '../ButtonUploadImagen';
+import { ButtonUploadImagen } from '../../../components/ButtonUploadImagen';
 
 const reducerProducto = (state, action) => {
   switch (action.type) {
@@ -114,7 +114,9 @@ const ModalAnnadirProductos = ({ open, onClose, onCrearProducto }) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
+        <Button onClick={onClose} variant="outlined">
+          Cancelar
+        </Button>
         <Button onClick={crearNuevoProducto} loading={estaCreandoProducto}>
           Añadir producto
         </Button>

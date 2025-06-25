@@ -2,9 +2,9 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { Roboto } from 'next/font/google';
 import theme from '../src/theme';
 import { EstadoAppContextProvider } from './context/EstadoAppContext';
-import { NavBarLayout } from './components/layouts/NavBarLayout';
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import './global.scss';
+import { NavBarLayout } from './components/layouts/NavBarLayout';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],

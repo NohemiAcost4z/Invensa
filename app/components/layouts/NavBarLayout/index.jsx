@@ -97,7 +97,7 @@ function NavBarLayout({ children }) {
                       className={styles.toolbarLinks}
                       color={
                         trigger
-                          ? theme.palette.text.secondary
+                          ? 'white'
                           : !!usuario?.idUsuario
                           ? theme.palette.text.primary
                           : 'white'
@@ -127,7 +127,7 @@ function NavBarLayout({ children }) {
                     onClick={handleMenu}
                     sx={{
                       color: trigger
-                        ? theme.palette.text.secondary
+                        ? 'white'
                         : !!usuario?.idUsuario
                         ? theme.palette.text.primary
                         : 'white',

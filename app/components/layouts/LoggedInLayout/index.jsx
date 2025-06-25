@@ -4,7 +4,14 @@ import { useEffect } from 'react';
 
 function LoggedInLayout({ children }) {
   const router = useRouter();
-  const { usuario } = useEstadoApp();
+  const { usuario, setUsuario } = useEstadoApp();
+
+  useEffect(() => {
+    fetch('api/sesion').then(async (res) => {
+      const usuario = await res.json();
+      setUsuario(usuario);
+    });
+  }, [setUsuario]);
 
   useEffect(() => {
     if (usuario === undefined) return;

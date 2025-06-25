@@ -10,7 +10,7 @@ export async function GET() {
     const usuario = await getUsuarioLogedo();
     const [resultado] = await connection.execute(
       'SELECT * FROM producto WHERE Id_Usuario = ?',
-      [usuario?.Id_Usuario ?? null]
+      [usuario?.idUsuario ?? null]
     );
 
     const response = resultado.map((producto) => ({
@@ -61,7 +61,7 @@ export async function POST(request) {
       '_'
     )}`;
 
-    const idUsuario = (await getUsuarioLogedo()).Id_Usuario;
+    const idUsuario = (await getUsuarioLogedo()).idUsuario;
 
     await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
 
@@ -96,7 +96,7 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
-    const idUsuario = (await getUsuarioLogedo()).Id_Usuario;
+    const idUsuario = (await getUsuarioLogedo()).idUsuario;
     const data = await request.json();
     const [imagenAEliminar] = await connection.execute(
       'SELECT Path_Imagen from producto WHERE Id_Producto = ? AND  Id_Usuario = ?',
@@ -145,7 +145,7 @@ export async function PATCH(request) {
       '_'
     )}`;
 
-    const idUsuario = (await getUsuarioLogedo()).Id_Usuario;
+    const idUsuario = (await getUsuarioLogedo()).idUsuario;
 
     const [imageResults] = await connection.execute(
       'SELECT Path_Imagen from producto WHERE Id_Usuario = ?',
@@ -166,8 +166,7 @@ export async function PATCH(request) {
         nombreImagen,
         idProducto,
         idUsuario,
-      ],
-      nombreImagen
+      ]
     );
 
     if (imageChanged) {

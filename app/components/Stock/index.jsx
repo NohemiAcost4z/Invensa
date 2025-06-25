@@ -8,7 +8,7 @@ function Stock({ stock, idProducto }) {
   const [stockInterno, setStockInterno] = useState(stock);
 
   const updateStock = async (stock, idProducto) => {
-    const response = await fetch('../../api/producto/actualizarStock', {
+    const response = await fetch('api/producto/actualizarStock', {
       method: 'PATCH',
       body: JSON.stringify({ stock: +stock, idProducto }),
     });

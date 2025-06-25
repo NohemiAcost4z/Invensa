@@ -18,7 +18,7 @@ export async function PATCH(req) {
     const usuario = await getUsuarioLogedo();
 
     const buffer = Buffer.from(await fotoPerfil?.arrayBuffer());
-    const nombreImagen = `${usuario.Id_Usuario}_${fotoPerfil?.name?.replaceAll(
+    const nombreImagen = `${usuario.idUsuario}_${fotoPerfil?.name?.replaceAll(
       ' ',
       '_'
     )}`;
@@ -27,7 +27,7 @@ export async function PATCH(req) {
 
     await connection.execute(
       'UPDATE usuario SET Foto_Perfil = ? WHERE Id_Usuario = ?',
-      [nombreImagen, usuario.Id_Usuario]
+      [nombreImagen, usuario.idUsuario]
     );
 
     return Response.json({ fotoDePerfil: nombreImagen }, { status: 201 });

@@ -13,12 +13,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { ModalAnnadirProductos } from '../components/ModalAnnadirProductos';
 import { useEffect, useState } from 'react';
 import { CardProducto } from '../components/CardProducto';
 import { LoggedInLayout } from '../components/layouts/LoggedInLayout';
 import styles from './page.module.scss';
 import { ExpandMore } from '@mui/icons-material';
+import { ModalAnnadirProductos } from './components/ModalAnnadirProductos';
 
 export default function ProductosPage() {
   const theme = useTheme();
@@ -31,7 +31,7 @@ export default function ProductosPage() {
     useState(false);
 
   const leerProductos = async () => {
-    const response = await fetch('http://localhost:3000/api/producto', {
+    const response = await fetch('api/producto', {
       method: 'GET',
       credentials: 'include',
     });
@@ -45,7 +45,7 @@ export default function ProductosPage() {
       formData.append(key, productoAAnnadir[key])
     );
 
-    await fetch('http://localhost:3000/api/producto', {
+    await fetch('api/producto', {
       method: 'POST',
       body: formData,
     });
