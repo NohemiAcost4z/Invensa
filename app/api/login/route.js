@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { v4 as uuid } from 'uuid';
 import { connection } from '../../../src/lib/db';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
@@ -18,7 +18,7 @@ export async function POST(req) {
     );
 
     if (autorizado) {
-      const tokenDeSesion = randomUUID();
+      const tokenDeSesion = uuid();
       await connection.execute(
         'UPDATE usuario SET Session_Token = ? WHERE Correo = ?',
         [tokenDeSesion, correo]
@@ -28,7 +28,6 @@ export async function POST(req) {
         idUsuario: usuario[0].Id_Usuario,
         nombreVisible: usuario[0].Nombre_Visible,
         correo: usuario[0].Correo,
-        contrasenia: usuario[0].Contrasenia,
         codigo: usuario[0].Codigo,
         fotoPerfil: usuario[0].Foto_Perfil,
       };
@@ -51,7 +50,7 @@ export async function POST(req) {
       );
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     Response.json(
       { message: 'hubo un error tratando de iniciar sesion' },
       { status: 500 }

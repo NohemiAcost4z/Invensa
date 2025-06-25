@@ -1,11 +1,12 @@
-import { Delete, Edit } from '@mui/icons-material';
+import { Delete, Edit, Warning } from '@mui/icons-material';
 import {
   Box,
   Card,
   CardContent,
   CardMedia,
-  Container,
+  Divider,
   IconButton,
+  Stack,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -42,22 +43,54 @@ function CardProducto({ producto, onEdit, onDelete }) {
       <Card className={styles.cardContainer} key={producto.codigo}>
         <CardContent className={styles.imageContainer}>
           <Box className={styles.topButtonsContainer}>
-            <IconButton
-              aria-label="Editar producto"
-              onClick={() => setModalEditarProductoAbierto(true)}
+            <Box
+              sx={{ display: 'flex', marginLeft: 1.5, alignItems: 'center' }}
+              gap={1}
             >
-              <Tooltip title="Editar producto" placement="top">
-                <Edit sx={{ color: 'lightgrey' }} />
+              {producto.cantidadMinima && (
+                <Tooltip
+                  placement="top"
+                  title={`El stock se está agotando, el stock mínimo es: ${producto.cantidadMinima}`}
+                >
+                  <Warning color="warning" sx={{ fontSize: 20 }} />
+                </Tooltip>
+              )}
+              <Tooltip
+                title={`${producto.nombreProducto[0].toUpperCase()}${producto.nombreProducto.slice(
+                  1
+                )}`}
+                placement="top"
+              >
+                <Typography
+                  className={styles.nombreProducto}
+                  variant="h3"
+                  fontSize={24}
+                  color="white"
+                >
+                  {`${producto.nombreProducto[0].toUpperCase()}${producto.nombreProducto.slice(
+                    1
+                  )}`}
+                </Typography>
               </Tooltip>
-            </IconButton>
-            <IconButton
-              aria-label="Borrar producto"
-              onClick={() => eliminarProducto(producto.idProducto)}
-            >
-              <Tooltip title="Borrar producto" placement="top">
-                <Delete sx={{ color: 'lightgrey' }} />
-              </Tooltip>
-            </IconButton>
+            </Box>
+            <Box>
+              <IconButton
+                aria-label="Editar producto"
+                onClick={() => setModalEditarProductoAbierto(true)}
+              >
+                <Tooltip title="Editar producto" placement="top">
+                  <Edit sx={{ color: 'white', fontSize: 20 }} />
+                </Tooltip>
+              </IconButton>
+              <IconButton
+                aria-label="Borrar producto"
+                onClick={() => eliminarProducto(producto.idProducto)}
+              >
+                <Tooltip title="Borrar producto" placement="top">
+                  <Delete sx={{ color: 'white', fontSize: 20 }} />
+                </Tooltip>
+              </IconButton>
+            </Box>
           </Box>
           <CardMedia
             image={`/api/imagenes/${producto.pathImagen}`}
@@ -66,26 +99,30 @@ function CardProducto({ producto, onEdit, onDelete }) {
           />
         </CardContent>
         <CardContent>
-          <Container className={styles.contentContainer}>
-            <Typography variant="h3" fontSize={34}>
-              {`${producto.nombreProducto[0].toUpperCase()}${producto.nombreProducto.slice(
-                1
-              )}`}
-            </Typography>
+          <Stack spacing={1} divider={<Divider />}>
             <Typography fontWeight="bold" alignSelf="flex-end">
               {colombianPeso.format(producto.precio)}
             </Typography>
-          </Container>
-          <Container>
-            <Typography fontSize={18}>Código: {producto.codigo}</Typography>
-            <Typography fontSize={18}>
-              Categoria:{' '}
-              {`${producto.categoria[0].toUpperCase()}${producto.categoria.slice(
-                1
-              )}`}
-            </Typography>
-            <Stock stock={producto.cantidad} idProducto={producto.idProducto} />
-          </Container>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography>Código:</Typography>
+              <Typography> {producto.codigo}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography>Categoria:</Typography>
+              <Typography>
+                {`${producto.categoria[0].toUpperCase()}${producto.categoria.slice(
+                  1
+                )}`}
+              </Typography>
+            </Box>
+            <Box sx={{ alignSelf: 'center' }}>
+              <Stock
+                stock={producto.cantidad}
+                idProducto={producto.idProducto}
+                onChange={() => onEdit()}
+              />
+            </Box>
+          </Stack>
         </CardContent>
       </Card>
       <ModalEditarProducto

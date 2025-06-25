@@ -1,13 +1,15 @@
 'use client';
 import {
+  Box,
   Button,
   Container,
   Paper,
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const nuevoUsuarioReducer = (state, action) => {
@@ -31,6 +33,7 @@ const nuevoUsuarioReducer = (state, action) => {
 };
 
 export default function RegistrarsePage() {
+  const theme = useTheme();
   const router = useRouter();
   const [isError, setIsError] = useState(false);
   const [nuevoUsuario, dispatch] = useReducer(nuevoUsuarioReducer, {
@@ -45,18 +48,29 @@ export default function RegistrarsePage() {
         method: 'POST',
         body: JSON.stringify({ ...nuevoUsuario }),
       });
-      router.push('/inicio-sesion');
+      router.push('/');
     } catch {
       setIsError(true);
     }
   };
 
+  useEffect(() => {
+    const originalBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = theme.palette.primary.main;
+
+    return () => {
+      document.body.style.backgroundColor = originalBg;
+    };
+  }, [theme.palette.primary.main]);
+
   return (
     <>
-      <Typography variant="h2">Crear Nuevo Usuario</Typography>
-      <Paper sx={{ padding: '1em 1.5em' }}>
-        <Container>
-          <Stack gap={2} marginBottom={2}>
+      <Container>
+        <Typography variant="h2" color="white">
+          Crear Nuevo Usuario
+        </Typography>
+        <Paper sx={{ paddingX: 5, paddingY: 7, justifyContent: 'center' }}>
+          <Stack gap={2}>
             <TextField
               label="Nombre"
               value={nuevoUsuario.nombreUsuario}
@@ -93,16 +107,19 @@ export default function RegistrarsePage() {
                 La creación del usuario falló
               </Typography>
             )}
+            <Box textAlign="center">
+              <Button
+                disabled={Object.values(nuevoUsuario).includes('')}
+                onClick={() => crearUsuario()}
+                variant="contained"
+                size="large"
+              >
+                Crear usuario
+              </Button>
+            </Box>
           </Stack>
-          <Button
-            disabled={Object.values(nuevoUsuario).includes('')}
-            onClick={() => crearUsuario()}
-            variant="contained"
-          >
-            Crear usuario
-          </Button>
-        </Container>
-      </Paper>
+        </Paper>
+      </Container>
     </>
   );
 }

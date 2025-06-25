@@ -60,7 +60,7 @@ function ModalEditarProducto({ open, producto, onEdit, onClose }) {
     Object.keys(productoEditando).map((key) =>
       formData.append(key, productoEditando[key])
     );
-    const response = await fetch('http://localhost:3000/api/productos', {
+    const response = await fetch('api/productos', {
       method: 'PATCH',
       body: formData,
       credentials: 'include',
@@ -141,6 +141,7 @@ function ModalEditarProducto({ open, producto, onEdit, onClose }) {
               productoEditando,
             })
           }
+          variant="outlined"
         >
           Completar
         </Button>

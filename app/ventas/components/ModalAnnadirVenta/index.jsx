@@ -57,20 +57,21 @@ function ModalAnnadirVenta({ open, onClose, onCrear }) {
 
   const crearNuevaVenta = async (ventaAAnnadir) => {
     setEstaCreandoVenta(true);
-    await fetch('api/ventas', {
+    const response = await fetch('api/ventas', {
       method: 'POST',
       body: JSON.stringify({ ...ventaAAnnadir }),
       credentials: 'include',
     });
     if (!response.ok) {
-      setEstaCreandoAlerta(false);
-      const error = await response.json();
+      setEstaCreandoVenta(false);
       setNotificando(true);
+      const error = await response.json();
       setError(error.message);
       return;
     }
-    onCrear();
     setEstaCreandoVenta(false);
+    onCrear();
+    onClose();
   };
 
   return (

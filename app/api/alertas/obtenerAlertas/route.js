@@ -1,16 +1,10 @@
 import { connection } from '../../../../src/lib/db';
-import { getUsuarioLogedo } from '../../helpers';
+import { withSession } from '../../../../src/lib/utils';
 
-export async function GET() {
+export const GET = withSession(async (_, usuario) => {
   try {
-    const usuario = await getUsuarioLogedo();
-
-    if (!usuario) {
-      return Response.json([], { status: 403 });
-    }
-
     const [resultado] = await connection.execute(
-      'SELECT * FROM alertastock WHERE Id_Usuario = ?',
+      'SELECT * FROM alertastock WHERE Id_Usuario = ? AND Visible = TRUE',
       [usuario.idUsuario]
     );
 
@@ -34,10 +28,10 @@ export async function GET() {
     );
     return Response.json(response);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     Response.json(
       { message: 'Hubo un error obteniendo las alertas' },
       { status: 500 }
     );
   }
-}
+});

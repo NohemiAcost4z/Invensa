@@ -1,9 +1,9 @@
 import { writeFile } from 'fs/promises';
 import { connection } from '../../../../src/lib/db';
-import { getUsuarioLogedo } from '../../helpers';
 import path from 'path';
+import { withSession } from '../../../../src/lib/utils';
 
-export async function PATCH(req) {
+export const PATCH = withSession(async (req, usuario) => {
   try {
     const data = await req.formData();
     const fotoPerfil = data.get('fotoPerfil');
@@ -12,15 +12,6 @@ export async function PATCH(req) {
       return Response.json(
         { error: 'No se subió una imagen' },
         { status: 400 }
-      );
-    }
-
-    const usuario = await getUsuarioLogedo();
-
-    if (!usuario) {
-      return Response.json(
-        { message: 'no puedes modificar este recurso' },
-        { status: 403 }
       );
     }
 
@@ -39,10 +30,10 @@ export async function PATCH(req) {
 
     return Response.json({ fotoDePerfil: nombreImagen }, { status: 201 });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return Response.json(
       { message: 'la actualización de la foto de perfil falló' },
       { status: 500 }
     );
   }
-}
+});

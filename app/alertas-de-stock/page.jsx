@@ -78,12 +78,18 @@ export default function AlertaStock() {
                     <TableCell>{alerta.cantidadMinima}</TableCell>
                     <TableCell>
                       {alerta.fechaAlerta
-                        ? formateadorFecha.format(alerta.fechaAlerta)
+                        ? formateadorFecha.format(new Date(alerta.fechaAlerta))
                         : '-'}
                     </TableCell>
-                    <TableCell color={valoresPorEstado[alerta.estado].color}>
+                    <TableCell>
                       <Tooltip title="Las alertas se toman por atendidas si el stock supera el mínimo definido">
-                        {valoresPorEstado[alerta.estado].label}
+                        <Typography
+                          fontWeight="bold"
+                          fontSize={18}
+                          color={valoresPorEstado[alerta.estado].color}
+                        >
+                          {valoresPorEstado[alerta.estado].label}
+                        </Typography>
                       </Tooltip>
                     </TableCell>
                   </TableRow>

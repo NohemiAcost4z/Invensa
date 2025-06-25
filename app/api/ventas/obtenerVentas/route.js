@@ -1,14 +1,8 @@
 import { connection } from '../../../../src/lib/db';
-import { getUsuarioLogedo } from '../../helpers';
+import { withSession } from '../../../../src/lib/utils';
 
-export async function GET() {
+export const GET = withSession(async (_, usuario) => {
   try {
-    const usuario = await getUsuarioLogedo();
-
-    if (!usuario) {
-      return Response.json([], { status: 403 });
-    }
-
     const [resultadoVenta] = await connection.execute(
       'SELECT * FROM venta WHERE Id_Usuario = ?',
       [usuario.idUsuario]
@@ -46,4 +40,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+});

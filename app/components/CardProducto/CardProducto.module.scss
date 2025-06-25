@@ -5,13 +5,13 @@
 }
 
 .imagenProducto {
-  height: 21em;
+  height: 19em;
   width: 100%;
 }
 
 .cardContainer {
-  width: 21em;
-  min-width: 21em;
+  width: 19em;
+  min-width: 19em;
 }
 
 .imageContainer {
@@ -26,9 +26,16 @@
   position: absolute;
   top: 0;
   right: 0;
+  display: flex;
+  align-items: center;
   padding: 0.2em;
-  justify-self: end;
-  text-align: right;
+  justify-content: space-between;
   width: 100%;
-  background-color: rgba(#000000, 0.5);
+  background-color: rgba(#000000, 0.7);
+}
+
+.nombreProducto {
+  max-width: 11rem;
+  text-overflow: ellipsis;
+  overflow-x: clip;
 }

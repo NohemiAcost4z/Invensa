@@ -113,81 +113,85 @@ function NavBarLayout({ children }) {
                   </Link>
                 ))}
               </Container>
-              <div>
-                <IconButton
-                  size="large"
-                  edge="start"
-                  aria-label="menu"
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon
+              {!!usuario?.idUsuario && (
+                <div>
+                  <IconButton
                     size="large"
-                    aria-label="menu de gestión de la cuenta"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    sx={{
-                      color: trigger
-                        ? 'white'
-                        : !!usuario?.idUsuario
-                        ? theme.palette.text.primary
-                        : 'white',
+                    edge="start"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                  >
+                    <MenuIcon
+                      size="large"
+                      aria-label="menu de gestión de la cuenta"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleMenu}
+                      sx={{
+                        color: trigger
+                          ? 'white'
+                          : !!usuario?.idUsuario
+                          ? theme.palette.text.primary
+                          : 'white',
+                      }}
+                    />
+                  </IconButton>
+                  <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
                     }}
-                  />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={() => setCambiarPFPModalAbierto(true)}>
-                    <AddAPhotoIcon sx={{ marginRight: '0.4em' }} />
-                    Cambiar foto de perfil
-                  </MenuItem>
-                  <MenuItem onClick={handleLogout}>
-                    <LogoutIcon sx={{ marginRight: '0.4em' }} />
-                    Logout
-                  </MenuItem>
-                </Menu>
-              </div>
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={() => setCambiarPFPModalAbierto(true)}>
+                      <AddAPhotoIcon sx={{ marginRight: '0.4em' }} />
+                      Cambiar foto de perfil
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>
+                      <LogoutIcon sx={{ marginRight: '0.4em' }} />
+                      Logout
+                    </MenuItem>
+                  </Menu>
+                </div>
+              )}
             </Box>
           </Toolbar>
         </AppBar>
       </ElevationScroll>
       <Toolbar />
       {children}
-      <Dialog
-        open={cambiarPFPModalAbierto}
-        onClose={() => setCambiarPFPModalAbierto(false)}
-      >
-        <DialogTitle>Cambiar foto de perfil</DialogTitle>
-        <DialogContent>
-          <Stack spacing={1}>
-            <ButtonUploadImagen
-              imagen={fotoDePerfil}
-              setImagen={(imagen) => setFotoDePerfil(imagen)}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCambiarPFPModalAbierto(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={() => cambiarFotoDePerfil(fotoDePerfil)}>
-            Cambiar foto de perfil
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {!!usuario?.idUsuario && (
+        <Dialog
+          open={cambiarPFPModalAbierto}
+          onClose={() => setCambiarPFPModalAbierto(false)}
+        >
+          <DialogTitle>Cambiar foto de perfil</DialogTitle>
+          <DialogContent>
+            <Stack spacing={1}>
+              <ButtonUploadImagen
+                imagen={fotoDePerfil}
+                setImagen={(imagen) => setFotoDePerfil(imagen)}
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCambiarPFPModalAbierto(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => cambiarFotoDePerfil(fotoDePerfil)}>
+              Cambiar foto de perfil
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 }

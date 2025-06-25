@@ -22,13 +22,13 @@ async function getUsuarioLogedo() {
   return response;
 }
 
-async function obtenerCliente(correoCliente) {
+async function obtenerClienteConCorreo(correoCliente) {
   const [cliente] = await connection.execute(
     'SELECT * FROM cliente WHERE Correo = ?',
     [correoCliente]
   );
 
-  const response = cliente[0]
+  const response = !!cliente[0]
     ? {
         idCliente: cliente[0].Id_Cliente,
         nombreCliente: cliente[0].Nombre_Cliente,
@@ -42,10 +42,10 @@ async function obtenerCliente(correoCliente) {
 
 async function actualizarCliente(cliente) {
   await connection.execute(
-    `UPDATE cliente SET Nombre_Cliente = ?, Telefono, ?, Correo = ? WHERE Id_Cliente = ?`,
+    `UPDATE cliente SET Nombre_Cliente = ?, Telefono = ?, Correo = ? WHERE Id_Cliente = ?`,
     [cliente.nombreCliente, cliente.telefono, cliente.correo, cliente.idCliente]
   );
-  const response = await obtenerCliente(cliente.idCliente);
+  const response = await obtenerClienteConCorreo(cliente.correo);
   return response;
 }
 
@@ -58,9 +58,62 @@ async function crearCliente(cliente) {
       cliente.telefono,
       cliente.correo,
     ])
-    .then((err) => console.log(err));
-  const response = await obtenerCliente(cliente.correo);
+    .then((err) => console.error(err));
+  const response = await obtenerClienteConCorreo(cliente.correo);
   return response;
 }
 
-export { getUsuarioLogedo, crearCliente, actualizarCliente, obtenerCliente };
+async function getAlertaStockPorIdProducto(idProducto) {
+  const [alerta] = await connection.execute(
+    'SELECT * FROM alertastock WHERE Id_Producto = ?',
+    [idProducto]
+  );
+
+  return alerta[0]
+    ? {
+        idAlerta: alerta[0].Id_Alerta,
+        idProducto: alerta[0].Id_Producto,
+        idUsuario: alerta[0].Id_Usuario,
+        cantidadMinima: alerta[0].Cantidad_Minima,
+        fechaAlerta: alerta[0].Fecha_Alerta,
+        estado: alerta[0].Estado,
+      }
+    : undefined;
+}
+
+async function crearActualizacion({
+  idProducto,
+  idAlerta,
+  cantidad,
+  tipo,
+  idUsuario,
+}) {
+  try {
+    const idActualizacion = uuid();
+    await connection.execute(
+      'INSERT INTO actualizacion VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [
+        idActualizacion,
+        idProducto,
+        idUsuario,
+        idAlerta,
+        cantidad,
+        tipo,
+        new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
+      ]
+    );
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+export {
+  getUsuarioLogedo,
+  crearCliente,
+  actualizarCliente,
+  obtenerClienteConCorreo,
+  getAlertaStockPorIdProducto,
+  crearActualizacion,
+};

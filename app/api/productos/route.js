@@ -3,32 +3,38 @@ import { writeFile } from 'fs/promises';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
 import fs from 'fs/promises';
-import { getUsuarioLogedo } from '../helpers';
+import { crearActualizacion, getAlertaStockPorIdProducto } from '../helpers';
+import { withSession } from '../../../src/lib/utils';
 
-export async function GET() {
+export const GET = withSession(async (_, usuario) => {
   try {
-    const usuario = await getUsuarioLogedo();
-
-    if (!usuario) return Response.json([], { status: 403 });
-
     const [resultado] = await connection.execute(
-      'SELECT * FROM producto WHERE Id_Usuario = ?',
+      'SELECT * FROM producto WHERE Id_Usuario = ? AND Visible = TRUE',
       [usuario?.idUsuario ?? null]
     );
+    const response = await Promise.all(
+      resultado.map(async (producto) => {
+        const alerta = await getAlertaStockPorIdProducto(producto.Id_Producto);
 
-    const response = resultado.map((producto) => ({
-      idProducto: producto.Id_Producto,
-      nombreProducto: producto.Nombre_Producto,
-      cantidad: producto.Cantidad,
-      precio: producto.Precio,
-      codigo: producto.Codigo,
-      categoria: producto.Categoria,
-      pathImagen: producto.Path_Imagen,
-    }));
+        return {
+          idProducto: producto.Id_Producto,
+          nombreProducto: producto.Nombre_Producto,
+          cantidad: producto.Cantidad,
+          precio: producto.Precio,
+          codigo: producto.Codigo,
+          categoria: producto.Categoria,
+          pathImagen: producto.Path_Imagen,
+          cantidadMinima:
+            alerta && alerta.estado === 'Pendiente'
+              ? alerta.cantidadMinima
+              : undefined,
+        };
+      })
+    );
 
     return Response.json(response);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return Response.json(
       {
         Message: 'No se obtener el usuario',
@@ -36,10 +42,17 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+});
 
-export async function POST(request) {
+export const POST = withSession(async (request, usuario) => {
   try {
+    if (!usuario) {
+      return Response.json(
+        { message: 'No tienes acceso a este recurso' },
+        { status: 403 }
+      );
+    }
+
     const data = await request.formData();
     const imagenProducto = data.get('imagenProducto');
 
@@ -64,12 +77,12 @@ export async function POST(request) {
       '_'
     )}`;
 
-    const idUsuario = (await getUsuarioLogedo()).idUsuario;
-
     await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
 
+    await connection.beginTransaction();
+
     const [resultado] = await connection.execute(
-      'INSERT INTO producto VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO producto VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         idProducto,
         nombreProducto,
@@ -78,16 +91,28 @@ export async function POST(request) {
         codigoProducto,
         categoriaProducto,
         nombreImagen,
-        idUsuario,
+        usuario.idUsuario,
+        true,
       ]
     );
+
+    await crearActualizacion({
+      idAlerta: null,
+      idUsuario: usuario.idUsuario,
+      idProducto: idProducto,
+      cantidad: cantidadProducto,
+      tipo: 'Creación de un producto',
+    });
+
+    await connection.commit();
 
     return Response.json({
       mensaje: 'el producto fue insertado exitosamente',
       idInsertado: resultado,
     });
   } catch (err) {
-    console.log(err);
+    await connection.rollback();
+    console.error(err);
     return Response.json(
       {
         Message: 'No se pudo crear el producto',
@@ -95,26 +120,55 @@ export async function POST(request) {
       { status: 500 }
     );
   }
-}
+});
 
-export async function DELETE(request) {
+export const DELETE = withSession(async (request, usuario) => {
   try {
-    const idUsuario = (await getUsuarioLogedo()).idUsuario;
+    const idUsuario = usuario.idUsuario;
+
     const data = await request.json();
     const [imagenAEliminar] = await connection.execute(
-      'SELECT Path_Imagen from producto WHERE Id_Producto = ? AND  Id_Usuario = ?',
-      [data.idProducto, idUsuario]
+      'SELECT Path_Imagen from producto WHERE Id_Producto = ?',
+      [data.idProducto]
     );
+    const alertaProducto = await getAlertaStockPorIdProducto(data.idProducto);
+
+    await connection.beginTransaction();
+    if (alertaProducto) {
+      await connection.execute(
+        'UPDATE alertastock SET Visible=FALSE WHERE Id_Producto = ?',
+        [data.idProducto]
+      );
+      await crearActualizacion({
+        idUsuario,
+        idAlerta: alertaProducto.idAlerta,
+        idProducto: data.idProducto,
+        cantidad: 0,
+        tipo: 'Borrado de una alerta',
+      });
+    }
+
     await connection.execute(
-      'DELETE FROM producto WHERE Id_Producto = ? AND Id_Usuario = ?',
-      [data.idProducto, idUsuario]
+      'UPDATE producto SET Visible = FALSE WHERE Id_Producto = ?',
+      [data.idProducto]
     );
+    await crearActualizacion({
+      idUsuario,
+      idAlerta: alertaProducto?.idAlerta ?? null,
+      idProducto: data.idProducto,
+      cantidad: 0,
+      tipo: 'Borrado de un producto',
+    });
+
     await fs.rm(
       path.join(process.cwd(), 'imagenes', imagenAEliminar[0].Path_Imagen)
     );
+
+    await connection.commit();
     return new Response(null, { status: 204 });
   } catch (err) {
-    console.log(err);
+    await connection.rollback();
+    console.error(err);
     return Response.json(
       {
         Message: 'No se pudo eliminar el producto',
@@ -122,66 +176,76 @@ export async function DELETE(request) {
       { status: 500 }
     );
   }
-}
+});
 
-export async function PATCH(request) {
+export const PATCH = withSession(async (request, usuario) => {
   try {
     const data = await request.formData();
     const imagenProducto = data.get('imagen');
-
-    if (!imagenProducto) {
-      return Response.json(
-        { error: 'No se subió una imagen' },
-        { status: 400 }
-      );
-    }
-
     const idProducto = data.get('idProducto');
     const nombreProducto = data.get('nombre');
     const precioProducto = data.get('precio');
     const codigoProducto = data.get('codigo');
     const categoriaProducto = data.get('categoria');
 
-    const buffer = Buffer.from(await imagenProducto?.arrayBuffer());
+    const [productoGuardado] = await connection.execute(
+      'SELECT Path_Imagen, Cantidad from producto WHERE Id_Producto = ?',
+      [idProducto]
+    );
+    const alerta = await getAlertaStockPorIdProducto(idProducto);
+
     const nombreImagen = `${idProducto}_${imagenProducto?.name?.replaceAll(
       ' ',
       '_'
     )}`;
 
-    const idUsuario = (await getUsuarioLogedo()).idUsuario;
+    const cambioImagen =
+      imagenProducto?.name != null &&
+      nombreImagen !== productoGuardado[0].Path_Imagen;
 
-    const [imageResults] = await connection.execute(
-      'SELECT Path_Imagen from producto WHERE Id_Usuario = ?',
-      [idUsuario]
-    );
+    if (cambioImagen) {
+      const buffer = Buffer.from(await imagenProducto?.arrayBuffer());
+      await writeFile(
+        path.join(process.cwd(), 'imagenes', nombreImagen),
+        buffer
+      );
+    }
 
-    const imageChanged = nombreImagen !== imageResults[0].Path_Imagen;
-
-    await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
+    await connection.beginTransaction();
 
     await connection.execute(
-      'UPDATE producto SET Nombre_Producto = ?, Precio = ?, Codigo = ?, Categoria = ?, Path_Imagen = ? WHERE Id_Producto = ? AND Id_Usuario = ?',
+      `UPDATE producto SET Nombre_Producto = ?, Precio = ?, Codigo = ?, Categoria = ?${
+        cambioImagen ? `, Path_Imagen = "${nombreImagen}"` : ''
+      } WHERE Id_Producto = ?`,
       [
         nombreProducto,
         precioProducto,
         codigoProducto,
         categoriaProducto,
-        nombreImagen,
         idProducto,
-        idUsuario,
       ]
     );
+    await crearActualizacion({
+      idUsuario: usuario.idUsuario,
+      idAlerta: alerta ? alerta.idAlerta : null,
+      idProducto: idProducto,
+      cantidad: productoGuardado[0].Cantidad,
+      tipo: 'Actualización de la definición de un producto',
+    });
 
-    if (imageChanged) {
+    connection.commit();
+
+    if (cambioImagen) {
       await fs.rm(
         path.join(process.cwd(), 'imagenes', imageResults[0].Path_Imagen)
       );
     }
     return Response.json({ message: 'producto actualizado' });
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    connection.rollback();
     return Response.json({
       message: 'Hubo un error al tratar de actualizar el producto',
     });
   }
-}
+});

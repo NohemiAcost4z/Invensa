@@ -47,6 +47,7 @@ function ModalAnnadirAlerta({ open, onClose, onCrear }) {
     }
     setEstaCreandoAlerta(false);
     onCrear();
+    onClose();
   };
 
   return (
