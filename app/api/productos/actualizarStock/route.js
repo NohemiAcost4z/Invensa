@@ -44,7 +44,7 @@ export const PATCH = withSession(async (req) => {
 
     await crearActualizacion({
       idUsuario: usuario.idUsuario,
-      idAlerta: alertaProducto.idAlerta,
+      idAlerta: alertaProducto?.idAlerta,
       idProducto: data.idProducto,
       cantidad: data.stock,
       tipo: 'Actualización de stock',

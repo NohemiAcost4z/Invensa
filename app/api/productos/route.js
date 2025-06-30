@@ -3,6 +3,7 @@ import { writeFile } from 'fs/promises';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
 import fs from 'fs/promises';
+import { existsSync } from 'fs';
 import { crearActualizacion, getAlertaStockPorIdProducto } from '../helpers';
 import { withSession } from '../../../src/lib/utils';
 
@@ -76,6 +77,10 @@ export const POST = withSession(async (request, usuario) => {
       ' ',
       '_'
     )}`;
+
+    if (!existsSync('imagenes')) {
+      await fs.mkdir('imagenes', { recursive: true });
+    }
 
     await writeFile(path.join(process.cwd(), 'imagenes', nombreImagen), buffer);
 
